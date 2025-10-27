@@ -143,84 +143,74 @@ export default function CVMaker() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {!isPreviewStep ? (
           /* Form Steps */
-          <div className="max-w-4xl mx-auto">
-            <div className="space-y-6">
-              {/* Progress Steps */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="mb-6">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-2">Create Your CV</h2>
-                  <p className="text-sm text-gray-600">Step {currentStep + 1} of {sections.length}</p>
+          <div className="max-w-6xl mx-auto">
+            <div className="space-y-8">
+              {/* Horizontal Progress Stepper */}
+              <div className="bg-white rounded-lg shadow-sm p-8">
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Your CV</h2>
+                  <p className="text-sm text-gray-600">Complete all sections to generate your professional CV</p>
                 </div>
                 
-                {/* Progress Bar */}
-                <div className="mb-6">
-                  <div className="flex justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-700">Progress</span>
-                    <span className="text-xs font-medium text-gray-700">
-                      {Math.round(((currentStep + 1) / sections.length) * 100)}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                {/* Horizontal Stepper */}
+                <div className="relative">
+                  {/* Progress Line */}
+                  <div className="absolute top-12 left-0 right-0 h-1 bg-gray-200" 
+                       style={{ marginLeft: '2.5rem', marginRight: '2.5rem' }}>
                     <div 
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${((currentStep + 1) / sections.length) * 100}%` }}
+                      className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500"
+                      style={{ width: `${(currentStep / (sections.length - 1)) * 100}%` }}
                     />
                   </div>
-                </div>
 
-                {/* Step Indicators */}
-                <div className="space-y-2">
-                  {sections.map((section, index) => {
-                    const Icon = section.icon;
-                    const isCompleted = index < currentStep;
-                    const isCurrent = index === currentStep;
-                    
-                    return (
-                      <button
-                        key={section.id}
-                        onClick={() => setCurrentStep(index)}
-                        className={`w-full flex items-center p-3 rounded-lg transition-all ${
-                          isCurrent
-                            ? 'bg-blue-50 border-2 border-blue-500'
-                            : isCompleted
-                            ? 'bg-green-50 border border-green-200 hover:bg-green-100'
-                            : 'bg-gray-50 border border-gray-200 cursor-not-allowed opacity-60'
-                        }`}
-                        disabled={!isCompleted && !isCurrent}
-                      >
-                        <div
-                          className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${
-                            isCurrent
-                              ? 'bg-blue-600 text-white'
-                              : isCompleted
-                              ? 'bg-green-500 text-white'
-                              : 'bg-gray-300 text-gray-600'
-                          }`}
-                        >
-                          {isCompleted ? (
-                            <Check className="w-4 h-4" />
-                          ) : (
-                            <Icon className="w-4 h-4" />
-                          )}
-                        </div>
-                        <div className="ml-3 flex-1 text-left">
-                          <h3
-                            className={`text-sm font-medium ${
-                              isCurrent ? 'text-blue-900' : isCompleted ? 'text-green-900' : 'text-gray-700'
+                  {/* Steps */}
+                  <div className="relative flex justify-between">
+                    {sections.map((section, index) => {
+                      const Icon = section.icon;
+                      const isCompleted = index < currentStep;
+                      const isCurrent = index === currentStep;
+                      
+                      return (
+                        <div key={section.id} className="flex flex-col items-center" style={{ flex: '1' }}>
+                          {/* Step Circle */}
+                          <button
+                            onClick={() => isCompleted || isCurrent ? setCurrentStep(index) : null}
+                            disabled={!isCompleted && !isCurrent}
+                            className={`relative z-10 flex items-center justify-center w-20 h-20 rounded-full transition-all duration-300 ${
+                              isCurrent
+                                ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg scale-110'
+                                : isCompleted
+                                ? 'bg-gradient-to-br from-purple-400 to-pink-400 shadow-md hover:scale-105'
+                                : 'bg-gray-300 cursor-not-allowed'
                             }`}
                           >
-                            {section.label}
-                          </h3>
-                          {isCurrent && (
-                            <p className="text-xs text-gray-600 mt-0.5">{section.description}</p>
-                          )}
+                            {isCompleted && !isCurrent ? (
+                              <Check className="w-8 h-8 text-white" />
+                            ) : (
+                              <Icon className="w-8 h-8 text-white" />
+                            )}
+                            
+                            {/* Current step indicator dot */}
+                            {isCurrent && (
+                              <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-4 w-4 bg-pink-500"></span>
+                              </span>
+                            )}
+                          </button>
+                          
+                          {/* Step Label */}
+                          <div className="mt-4 text-center max-w-[120px]">
+                            <p className={`text-sm font-semibold ${
+                              isCurrent ? 'text-purple-600' : isCompleted ? 'text-gray-900' : 'text-gray-400'
+                            }`}>
+                              {section.label}
+                            </p>
+                          </div>
                         </div>
-                        {isCurrent && (
-                          <ChevronRight className="w-5 h-5 text-blue-600" />
-                        )}
-                      </button>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
